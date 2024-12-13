@@ -1,0 +1,6 @@
+@DotaProject_HostAddress = http://localhost:5115
+
+GET {{DotaProject_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
