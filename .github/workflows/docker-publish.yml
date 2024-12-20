@@ -44,7 +44,7 @@ jobs:
           push: false
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
-      # Debugging step: List Docker images
+      # Debugging: List Docker images
       - name: List Docker images
         run: docker images
 
@@ -57,4 +57,4 @@ jobs:
             -e ConnectionStrings__DefaultConnection=${{ secrets.AZURE_SQL_CONNECTION_STRING }} \
             -e JwtSettings__PrivateKey=${{ secrets.JWTPRIVATEKEY }} \
             -e JwtSettings__PublicKey=${{ secrets.JWTPUBLICKEY }} \
-            ghcr.io/ericnorwing/dotaproject:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
