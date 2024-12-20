@@ -40,13 +40,13 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: DotaProject/Dockerfile # Correct input key for the Dockerfile path
+          file: DotaProject/Dockerfile
           push: false
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          build-args: |
-            AZURE_SQL_CONNECTION_STRING=${{ secrets.AZURE_SQL_CONNECTION_STRING }}
-            JWTPRIVATEKEY=${{ secrets.JWTPRIVATEKEY }}
-            JWTPUBLICKEY=${{ secrets.JWTPUBLICKEY }}
+
+      # Debugging step: List Docker images
+      - name: List Docker images
+        run: docker images
 
       # Run the Docker container
       - name: Run Docker container
@@ -57,5 +57,4 @@ jobs:
             -e ConnectionStrings__DefaultConnection=${{ secrets.AZURE_SQL_CONNECTION_STRING }} \
             -e JwtSettings__PrivateKey=${{ secrets.JWTPRIVATEKEY }} \
             -e JwtSettings__PublicKey=${{ secrets.JWTPUBLICKEY }} \
-            --name dota-project-test-container \
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ghcr.io/ericnorwing/dotaproject:latest
