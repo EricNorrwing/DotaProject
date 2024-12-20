@@ -1,8 +1,6 @@
 name: Docker
 
 on:
-  schedule:
-    - cron: '30 21 * * *'
   push:
     branches: [ "master" ]
     tags: [ 'v*.*.*' ]
@@ -61,6 +59,19 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |                           
             AZURE_SQL_CONNECTION_STRING=${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+            JWTPRIVATEKEY=${{ secrets.JWTPRIVATEKEY }}
+            JWTPUBLICKEY=${{ secrets.JWTPUBLICKEY }}
+
+      - name: Run Docker container for testing
+        run: |
+          docker run -d \
+            -p 8080:8080 \
+            -p 8081:8081 \
+            --name dota-project-test-container \
+            -e AZURE_SQL_CONNECTION_STRING=${{ secrets.AZURE_SQL_CONNECTION_STRING }} \
+            -e JWTPRIVATEKEY=${{ secrets.JWTPRIVATEKEY }} \
+            -e JWTPUBLICKEY=${{ secrets.JWTPUBLICKEY }} \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Sign the published Docker image
         if: ${{ github.event_name != 'pull_request' }}
