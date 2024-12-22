@@ -1,0 +1,12 @@
+﻿services:
+  dotaproject:
+    image: dotaproject
+    build:
+      context: .
+      dockerfile: DotaProject/Dockerfile
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+        

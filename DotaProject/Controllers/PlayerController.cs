@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using DotaProject.Models;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DotaProject.Controllers;
 
@@ -41,6 +42,7 @@ public class PlayerController : Controller
 
     // GET: api/player
     [HttpGet]
+    [Authorize(Policy = "admin")]
     public IActionResult GetAllPlayers()
     {
         return Ok(Players); // Return the list of players as JSON
