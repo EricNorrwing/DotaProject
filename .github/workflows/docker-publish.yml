@@ -28,4 +28,4 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: uldin/dotaprojec:latest
+          tags: uldin/dotaproject:latest
