@@ -38,5 +38,6 @@ public class AuthController(User inMemoryUser, IConfiguration configuration) : C
         return Ok(new { token = jwt });
     }
     
+    //TODO REMOVE ME
     
 }
