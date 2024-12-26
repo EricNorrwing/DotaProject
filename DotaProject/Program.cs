@@ -1,7 +1,9 @@
 using System.Text;
+using DotaProject.Data;
 using DotaProject.Extensions.UserExtensions;
 using DotaProject.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
@@ -46,6 +48,8 @@ builder.Services.AddAuthorization(auth =>
     auth.AddPolicy(IdentityPolicyConstants.AdminUserPolicyName, policy => policy.RequireClaim(IdentityPolicyConstants.AdminUserClaimName, "true"));
 });
 
+builder.Services.AddDbContext<PlayerDbContext>(options => 
+    options.UseSqlServer(config.GetConnectionString("PlayerDbConnection")));
 
 var app = builder.Build();
 
