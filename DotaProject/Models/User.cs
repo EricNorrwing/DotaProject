@@ -1,9 +1,11 @@
-﻿using System.Security.Claims;
-
-namespace DotaProject.Models;
-
-public record User(
-    string Username,
-    string Password,
-    IEnumerable<Claim> Claims
-);
+﻿namespace DotaProject.Models
+{
+    public class User
+    {
+        public int Id { get; set; } 
+        public string Username { get; set; } 
+        public string PasswordHash { get; set; } 
+        
+        public List<UserClaim> Claims { get; set; }
+    }
+}

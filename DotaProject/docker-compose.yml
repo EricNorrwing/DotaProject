@@ -1,0 +1,16 @@
+﻿
+services:
+  dotaproject:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"  # HTTP
+      - "8081:8081"  # HTTPS
+    environment:
+      - ASPNETCORE_URLS=http://+:8080;https://+:8081
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetcore-dev-cert.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=Any12345
+    volumes:
+      - "C:/Users/erinc/RiderProjects/DataProject/aspnetcore-dev-cert.pfx:/https/aspnetcore-dev-cert.pfx"
+    

@@ -1,53 +1,77 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using DotaProject.Models;
-using System.Collections.Generic;
+using DotaProject.Services;
+using DotaProject.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Data.SqlClient;
 
-namespace DotaProject.Controllers;
-
-[ApiController]
-[Route("api/[controller]")] // This sets the route to /api/playera
-public class PlayerController : Controller
+namespace DotaProject.Controllers
 {
-    // A sample list of players (mock data)
-    // private static readonly List<Player> Players = new List<Player>
-    // {
-    //     new Player
-    //     {
-    //         Id = 1,
-    //         PlayerIgn = "Eric",
-    //         CurrentRoles =  [ "Carry", "Hard Support" ],
-    //         DateofBirth = new DateTime(1992, 10, 20),
-    //         Earnings = 100,
-    //         Nationality = "Sweden",
-    //         PlayerName = "Uldin",
-    //         Region = "WEU",
-    //         Url = "uldin.se",
-    //         YearsActive = "1992-2024"
-    //     },
-    //     new Player
-    //     {
-    //         Id = 2,
-    //         PlayerIgn = "DotaKing",
-    //         CurrentRoles = [ "Carry", "Hard Support" ],
-    //         DateofBirth = new DateTime(1995, 5, 15),
-    //         Earnings = 200,
-    //         Nationality = "Germany",
-    //         PlayerName = "Karl",
-    //         Region = "EU",
-    //         Url = "dotaking.gg",
-    //         YearsActive = "2010-2024"
-    //     }
-    // };
-
-    // GET: api/player
-    [HttpGet]
-    [Authorize(Policy = "admin")]
-    public IActionResult GetAllPlayers()
+    [ApiController]
+    [Route("api/[controller]")]
+    public class PlayerController : ControllerBase
     {
-        return Ok(Players); // Return the list of players as JSON
+        private readonly IPlayerService _service;
+
+        public PlayerController(IPlayerService service)
+        {
+            _service = service;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllPlayers()
+        {
+            var players = await _service.GetAllPlayersAsync();
+            return Ok(players);
+        }
+
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetPlayerById(int id)
+        {
+            var player = await _service.GetPlayerByIdAsync(id);
+            if (player == null)
+            {
+                return NotFound(new { Message = "Player not found." });
+            }
+            return Ok(player);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreatePlayer([FromBody] Player newPlayer)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var player = await _service.AddPlayerAsync(newPlayer);
+            return CreatedAtAction(nameof(GetPlayerById), new { id = player.Id }, player);
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> UpdatePlayer(int id, [FromBody] Player updatedPlayer)
+        {
+            var player = await _service.UpdatePlayerAsync(id, updatedPlayer);
+            if (player == null)
+            {
+                return NotFound(new { Message = "Player not found." });
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeletePlayer(int id)
+        {
+            var success = await _service.DeletePlayerAsync(id);
+            if (!success)
+            {
+                return NotFound(new { Message = "Player not found." });
+            }
+
+            return NoContent();
+        }
+        
+       
     }
-
-   
 }
-
