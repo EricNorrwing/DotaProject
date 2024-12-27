@@ -3,7 +3,9 @@ using DotaProject.Data;
 using DotaProject.Data.FileReaders;
 using DotaProject.Data.Repositories;
 using DotaProject.Data.Repositories.Interfaces;
+using DotaProject.Extensions;
 using DotaProject.Extensions.StartupLogging;
+using DotaProject.Extensions.UserExtensions;
 using DotaProject.Identity;
 using DotaProject.Services;
 using DotaProject.Services.Interfaces;
@@ -82,7 +84,10 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.LoggingStartup(builder.Configuration);
+app.AddDefaultUsers(builder.Configuration);
+
 app.MapControllers();
 
 app.Run();
