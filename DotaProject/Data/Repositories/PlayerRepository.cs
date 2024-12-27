@@ -1,39 +1,32 @@
-﻿using DotaProject.Data.Repositories.Interfaces;
+﻿using DotaProject.Data.Repositories.DbContexts;
+using DotaProject.Data.Repositories.Interfaces;
 using DotaProject.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DotaProject.Data.Repositories;
 
-public class PlayerRepository: IPlayerRepository
+public class PlayerRepository(PlayerDbContext context): IPlayerRepository
 {
-    
-    private readonly PlayerDbContext _context;
-
-    public PlayerRepository(PlayerDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<IEnumerable<Player>> GetAllPlayersAsync()
     {
-        return await _context.Players.ToListAsync();
+        return await context.Players.ToListAsync();
     }
 
     public async Task<Player?> GetPlayerByIdAsync(int id)
     {
-        return await _context.Players.FindAsync(id);
+        return await context.Players.FindAsync(id);
     }
 
     public async Task<Player> AddPlayerAsync(Player player)
     {
-        _context.Players.Add(player);
-        await _context.SaveChangesAsync();
+        context.Players.Add(player);
+        await context.SaveChangesAsync();
         return player;
     }
 
     public async Task<Player?> UpdatePlayerAsync(int id, Player updatedPlayer)
     {
-        var player = await _context.Players.FindAsync(id);
+        var player = await context.Players.FindAsync(id);
         if (player == null) return null;
 
         player.PlayerIgn = updatedPlayer.PlayerIgn;
@@ -46,17 +39,17 @@ public class PlayerRepository: IPlayerRepository
         player.Url = updatedPlayer.Url;
         player.YearsActive = updatedPlayer.YearsActive;
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
         return player;
     }
 
     public async Task<bool> DeletePlayerAsync(int id)
     {
-        var player = await _context.Players.FindAsync(id);
+        var player = await context.Players.FindAsync(id);
         if (player == null) return false;
 
-        _context.Players.Remove(player);
-        await _context.SaveChangesAsync();
+        context.Players.Remove(player);
+        await context.SaveChangesAsync();
         return true;
     
     }

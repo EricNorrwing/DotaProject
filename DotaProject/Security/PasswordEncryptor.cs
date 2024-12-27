@@ -1,6 +1,6 @@
 ﻿namespace DotaProject.Security;
 
-public class PasswordHandler
+public class PasswordEncryptor
 {
     public static string HashPassword(string password)
     {

@@ -2,6 +2,7 @@ using System.Text;
 using DotaProject.Data;
 using DotaProject.Data.FileReaders;
 using DotaProject.Data.Repositories;
+using DotaProject.Data.Repositories.DbContexts;
 using DotaProject.Data.Repositories.Interfaces;
 using DotaProject.Extensions;
 using DotaProject.Extensions.StartupLogging;
@@ -26,7 +27,7 @@ Log.Information("Loaded .env files");
 
 
 builder.Configuration.AddEnvironmentVariables();
-
+//SeriLog
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug() 
     .WriteTo.Console() 
@@ -41,7 +42,7 @@ IConfiguration config = builder.Configuration;
 
 
 builder.Services.AddControllers();
-
+//JWT
 builder.Services
     .AddAuthentication(options =>
     {
@@ -63,19 +64,32 @@ builder.Services
             ValidateLifetime = true
         };
     });
+//Authentication
 builder.Services.AddAuthorization(auth =>
 {
-    auth.AddPolicy(IdentityPolicyConstants.AdminUserPolicyName, policy => policy.RequireClaim(IdentityPolicyConstants.AdminUserClaimName, "true"));
-});
+    auth.AddPolicy(IdentityPolicyConstants.AdminUserPolicyName, policy =>
+        policy.RequireClaim(IdentityPolicyConstants.AdminUserClaimName, "true"));
 
+    auth.AddPolicy(IdentityPolicyConstants.VerifiedUserPolicyName, policy =>
+        policy.RequireClaim(IdentityPolicyConstants.VerifiedUserClaimName, "true"));
+});
+//Json Serialization options
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+        options.JsonSerializerOptions.WriteIndented = true;
+    });
+
+//Database
 builder.Services.AddDbContext<PlayerDbContext>(options => 
     options.UseSqlServer(config.GetConnectionString("PlayerDbConnection")));
-
 builder.Services.AddDbContext<AuthDbContext>(options =>
     options.UseSqlServer(config.GetConnectionString("AuthDbConnection")));
-
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 
 var app = builder.Build();

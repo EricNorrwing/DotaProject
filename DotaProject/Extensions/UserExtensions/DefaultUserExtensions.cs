@@ -7,7 +7,6 @@ namespace DotaProject.Extensions.UserExtensions
     {
         public static void AddDefaultUsers(this WebApplication app, IConfiguration configuration)
         {
-            
             var connectionString = configuration["ConnectionStrings:AuthDbConnection"];
             var sqlFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Extensions", "UserExtensions", "AddDefaultUsers.sql");
 
@@ -28,13 +27,13 @@ namespace DotaProject.Extensions.UserExtensions
                     using (var command = new SqlCommand(sqlScript, connection))
                     {
                         command.ExecuteNonQuery();
-                        Log.Information("Default users added to the AuthDb database via SQL file.");
+                        Log.Information("Default users and claims added to the AuthDb database via SQL file.");
                     }
                 }
             }
             catch (Exception ex)
             {
-                Log.Error($"Failed to execute SQL file for adding default users: {ex.Message}");
+                Log.Error($"Failed to execute SQL file for adding default users and claims: {ex.Message}");
             }
         }
     }

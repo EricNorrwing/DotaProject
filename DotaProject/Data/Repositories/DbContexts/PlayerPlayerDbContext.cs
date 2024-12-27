@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using DotaProject.Models;
+﻿using DotaProject.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace DotaProject.Data;
+namespace DotaProject.Data.Repositories.DbContexts;
 
 public class PlayerDbContext(DbContextOptions<PlayerDbContext> options) : DbContext(options)
 {

@@ -1,4 +1,6 @@
-﻿namespace DotaProject.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace DotaProject.Models;
 
 public class UserClaim
 {
@@ -8,5 +10,6 @@ public class UserClaim
     public string ClaimValue { get; set; } 
 
     
+    [JsonIgnore]
     public User User { get; set; }
 }

@@ -1,14 +1,12 @@
 ﻿using DotaProject.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace DotaProject.Data;
+namespace DotaProject.Data.Repositories.DbContexts;
 
 public class AuthDbContext: DbContext
 {
     public AuthDbContext(DbContextOptions<AuthDbContext> options)
-        : base(options)
-    {
-    }
+        : base(options) {}
 
     public DbSet<User> Users { get; set; }
     public DbSet<UserClaim> UserClaims { get; set; }
