@@ -5,6 +5,7 @@ using DotaProject.Data.Repositories;
 using DotaProject.Data.Repositories.DbContexts;
 using DotaProject.Data.Repositories.Interfaces;
 using DotaProject.Extensions;
+using DotaProject.Extensions.JwtExtensions;
 using DotaProject.Extensions.StartupLogging;
 using DotaProject.Extensions.UserExtensions;
 using DotaProject.Identity;
@@ -23,15 +24,15 @@ var root = Directory.GetCurrentDirectory();
 var dotenv = Path.Combine(root, "secrets.env");
 DotEnv.Load(dotenv);
 Log.Information("Loaded .env files");
-
-
-
 builder.Configuration.AddEnvironmentVariables();
+
+
+
 //SeriLog
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug() 
     .WriteTo.Console() 
-    .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day) 
+    .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
     .ReadFrom.Configuration(builder.Configuration)
     .CreateLogger();
 
@@ -42,37 +43,19 @@ IConfiguration config = builder.Configuration;
 
 
 builder.Services.AddControllers();
-//JWT
-builder.Services
-    .AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = config["JwtSettings:Issuer"],
-            ValidateAudience = true,
-            ValidAudience = config["JwtSettings:Audience"],
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(config["JwtSettings:Key"])),
-            ValidateLifetime = true
-        };
-    });
-//Authentication
-builder.Services.AddAuthorization(auth =>
-{
-    auth.AddPolicy(IdentityPolicyConstants.AdminUserPolicyName, policy =>
-        policy.RequireClaim(IdentityPolicyConstants.AdminUserClaimName, "true"));
 
-    auth.AddPolicy(IdentityPolicyConstants.VerifiedUserPolicyName, policy =>
-        policy.RequireClaim(IdentityPolicyConstants.VerifiedUserClaimName, "true"));
+
+
+//JWT
+builder.Services.AddJwtAuthentication(builder.Configuration);
+
+//Authorization
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", policy =>
+        policy.RequireClaim("role", "admin"));
 });
+
 //Json Serialization options
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -91,10 +74,38 @@ builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 
+//TODO CORS
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
+
 
 var app = builder.Build();
+//TODO REMOVE
+app.Use(async (context, next) =>
+{
+    if (context.User.Identity is { IsAuthenticated: true })
+    {
+        var claims = context.User.Claims.Select(c => $"{c.Type}={c.Value}");
+        Log.Information($"Authenticated user claims: {string.Join(", ", claims)}");
+    }
+    else
+    {
+        
+        Log.Warning("User is not authenticated.");
+    }
 
+    await next();
+});
 
+app.UseCors();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

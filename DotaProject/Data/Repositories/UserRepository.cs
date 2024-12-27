@@ -23,7 +23,9 @@ public class UserRepository(AuthDbContext context) : IUserRepository
 
     public async Task<User?> GetUserByUsernameAsync(string username)
     {
-        return await context.Users.FirstOrDefaultAsync(u => u.Username == username);
+        return await context.Users
+            .Include(u => u.Claims) 
+            .FirstOrDefaultAsync(u => u.Username == username);
     }
 
     public async Task<User> AddUserAsync(User user)

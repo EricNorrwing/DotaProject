@@ -3,6 +3,7 @@ using DotaProject.Models;
 using DotaProject.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace DotaProject.Controllers
 {
@@ -25,7 +26,6 @@ namespace DotaProject.Controllers
 
         
         [HttpGet]
-        [Authorize(Policy = IdentityPolicyConstants.VerifiedUserPolicyName)]
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await userService.GetAllUsersAsync();
@@ -34,7 +34,6 @@ namespace DotaProject.Controllers
 
         
         [HttpGet("{id:int}")]
-        [Authorize(Policy = IdentityPolicyConstants.VerifiedUserPolicyName)]
         public async Task<IActionResult> GetUserById(int id)
         {
             var user = await userService.GetUserByIdAsync(id);
@@ -68,8 +67,10 @@ namespace DotaProject.Controllers
             var result = await userService.DeleteUserAsync(id);
             if (!result)
             {
+                Log.Information($"Decoded claims for user: {string.Join(", ", User.Claims.Select(c => $"{c.Type}={c.Value}"))}");
                 return NotFound($"User with ID {id} not found.");
             }
+            Log.Information($"Decoded claims for user: {string.Join(", ", User.Claims.Select(c => $"{c.Type}={c.Value}"))}");
 
             return NoContent();
         }
@@ -80,12 +81,26 @@ namespace DotaProject.Controllers
         public async Task<IActionResult> SetAdmin(int id)
         {
             var result = await userService.SetAdminAsync(id);
+
             if (!result)
             {
-                return BadRequest($"Failed to promote user with ID {id} to 'admin'.");
+                return BadRequest(new { error = $"Failed to promote user with ID {id} to 'admin'." });
             }
 
-            return NoContent();
+            var user = await userService.GetUserByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound(new { message = $"User with ID {id} not found." });
+            }
+
+            var response = new
+            {
+                user.Id,
+                user.Username,
+                Claims = user.Claims.Select(c => new { c.ClaimType, c.ClaimValue })
+            };
+
+            return Ok(response);
         }
 
         
@@ -101,5 +116,26 @@ namespace DotaProject.Controllers
 
             return NoContent();
         }
+        
+        [HttpGet("current-user")]
+        [Authorize]
+        public IActionResult GetCurrentUser()
+        {
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                var username = User.Identity.Name ?? "Unknown";
+                var claims = User.Claims.Select(c => new { c.Type, c.Value });
+
+                return Ok(new
+                {
+                    Username = username,
+                    Claims = claims
+                });
+            }
+
+            return Unauthorized(new { message = "User is not authenticated." });
+        }
+
+        
     }
 }

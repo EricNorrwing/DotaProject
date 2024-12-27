@@ -9,6 +9,6 @@ namespace DotaProject.Models
         public string Password { get; set; } 
         
         [JsonIgnore]
-        public List<UserClaim>? Claims { get; set; }
+        public List<UserClaim>? Claims { get; set; } = new List<UserClaim>();
     }
 }

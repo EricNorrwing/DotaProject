@@ -24,7 +24,7 @@ END;
 IF NOT EXISTS (SELECT 1 FROM Users WHERE Username = 'EricAdmin')
 BEGIN
 INSERT INTO Users (Username, Password)
-VALUES ('EricAdmin', '$2a$12$eRmYY1UPj0C/5EBjKIFo/u.z2NiT5XIOh2SR4UT/ei4uJ.xLDRaCO'); 
+VALUES ('EricAdmin', '$2a$11$AW71Er2iK5nGoxCIZ/gYvu/xjjD8M5SETRVoE86VM8rXntt/I0z7q'); 
 
 DECLARE @AdminId INT = SCOPE_IDENTITY();
 
@@ -36,7 +36,7 @@ END;
 IF NOT EXISTS (SELECT 1 FROM Users WHERE Username = 'EricUser')
 BEGIN
 INSERT INTO Users (Username, Password)
-VALUES ('EricUser', '$2a$12$eRmYY1UPj0C/5EBjKIFo/u.z2NiT5XIOh2SR4UT/ei4uJ.xLDRaCO'); 
+VALUES ('EricUser', '$2a$11$AW71Er2iK5nGoxCIZ/gYvu/xjjD8M5SETRVoE86VM8rXntt/I0z7q'); 
 
 DECLARE @UserId INT = SCOPE_IDENTITY();
 

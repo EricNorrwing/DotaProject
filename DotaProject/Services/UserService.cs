@@ -2,6 +2,7 @@
 using DotaProject.Services.Interfaces;
 using DotaProject.Data.Repositories.Interfaces;
 using DotaProject.Security;
+using Serilog;
 
 namespace DotaProject.Services;
 
@@ -70,6 +71,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         try
         {
             await userRepository.SetAdminAsync(userId);
+            Log.Information($"Attempting to set user with ID {userId} as admin.");
             return true;
         }
         catch (Exception ex)
