@@ -76,21 +76,27 @@ namespace DotaProject.Controllers
 
             var claims = new[]
             {
-                new Claim("role", role),
+                new Claim(ClaimTypes.Role, role),
                 new Claim(JwtRegisteredClaimNames.Sub, username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-            var token = new JwtSecurityToken(
-                issuer: configuration["JwtSettings:Issuer"],
-                audience: configuration["JwtSettings:Audience"],
-                claims: claims,
-                expires: DateTime.UtcNow.AddHours(1),
-                signingCredentials: signingCredentials
-            );
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = signingCredentials,
+                Issuer = configuration["JwtSettings:Issuer"],
+                Audience = configuration["JwtSettings:Audience"]
+            };
+            
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+
+            return tokenHandler.WriteToken(securityToken);
         }
+
     }
 
     public class LoginRequest

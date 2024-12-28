@@ -16,7 +16,8 @@ public class AuthDbContext: DbContext
         modelBuilder.Entity<User>()
             .HasMany(u => u.Claims)
             .WithOne(c => c.User)
-            .HasForeignKey(c => c.UserId);
+            .HasForeignKey(c => c.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         base.OnModelCreating(modelBuilder);
     }

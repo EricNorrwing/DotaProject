@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using DotaProject.Data;
 using DotaProject.Data.FileReaders;
@@ -52,8 +53,12 @@ builder.Services.AddJwtAuthentication(builder.Configuration);
 //Authorization
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("Admin", policy =>
-        policy.RequireClaim("role", "admin"));
+    
+    options.AddPolicy(IdentityPolicyConstants.AdminUserPolicyName, policy =>
+        policy.RequireClaim(ClaimTypes.Role, IdentityPolicyConstants.AdminUserClaimName));
+    
+    options.AddPolicy(IdentityPolicyConstants.VerifiedUserPolicyName, policy =>
+        policy.RequireClaim(ClaimTypes.Role, IdentityPolicyConstants.VerifiedUserClaimName));
 });
 
 //Json Serialization options
