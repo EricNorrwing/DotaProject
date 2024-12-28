@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		DotaProject\secrets.env = DotaProject\secrets.env
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScraperProject", "ScraperProject\ScraperProject.csproj", "{EADA9EFF-979C-4F86-89E7-28FEE3E0A592}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,6 +24,10 @@ Global
 		{F785E72A-2CDE-4089-815E-15E3D091E72A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F785E72A-2CDE-4089-815E-15E3D091E72A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F785E72A-2CDE-4089-815E-15E3D091E72A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EADA9EFF-979C-4F86-89E7-28FEE3E0A592}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EADA9EFF-979C-4F86-89E7-28FEE3E0A592}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EADA9EFF-979C-4F86-89E7-28FEE3E0A592}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EADA9EFF-979C-4F86-89E7-28FEE3E0A592}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

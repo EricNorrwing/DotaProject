@@ -117,24 +117,7 @@ namespace DotaProject.Controllers
             return NoContent();
         }
         
-        [HttpGet("current-user")]
-        [Authorize]
-        public IActionResult GetCurrentUser()
-        {
-            if (User.Identity?.IsAuthenticated == true)
-            {
-                var username = User.Identity.Name ?? "Unknown";
-                var claims = User.Claims.Select(c => new { c.Type, c.Value });
-
-                return Ok(new
-                {
-                    Username = username,
-                    Claims = claims
-                });
-            }
-
-            return Unauthorized(new { message = "User is not authenticated." });
-        }
+       
 
         
     }

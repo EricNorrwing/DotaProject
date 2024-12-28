@@ -5,52 +5,61 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DotaProject.Data.Repositories;
 
-public class PlayerRepository(PlayerDbContext context): IPlayerRepository
+public class PlayerRepository : IPlayerRepository
 {
+    private readonly PlayerDbContext _context;
+
+    public PlayerRepository(PlayerDbContext context)
+    {
+        _context = context;
+    }
+
     public async Task<IEnumerable<Player>> GetAllPlayersAsync()
     {
-        return await context.Players.ToListAsync();
+        return await _context.Players.ToListAsync();
     }
 
     public async Task<Player?> GetPlayerByIdAsync(int id)
     {
-        return await context.Players.FindAsync(id);
+        return await _context.Players.FindAsync(id);
     }
 
     public async Task<Player> AddPlayerAsync(Player player)
     {
-        context.Players.Add(player);
-        await context.SaveChangesAsync();
+        _context.Players.Add(player);
+        await _context.SaveChangesAsync();
         return player;
     }
 
     public async Task<Player?> UpdatePlayerAsync(int id, Player updatedPlayer)
     {
-        var player = await context.Players.FindAsync(id);
+        var player = await _context.Players.FindAsync(id);
         if (player == null) return null;
 
-        player.PlayerIgn = updatedPlayer.PlayerIgn;
-        player.CurrentRoles = updatedPlayer.CurrentRoles;
-        player.DateofBirth = updatedPlayer.DateofBirth;
-        player.Earnings = updatedPlayer.Earnings;
+        
+        player.InGameName = updatedPlayer.InGameName;
+        player.PlayerName = updatedPlayer.PlayerName; 
         player.Nationality = updatedPlayer.Nationality;
-        player.PlayerName = updatedPlayer.PlayerName;
+        player.Earnings = updatedPlayer.Earnings;
+        player.DateOfBirth = updatedPlayer.DateOfBirth; 
         player.Region = updatedPlayer.Region;
-        player.Url = updatedPlayer.Url;
         player.YearsActive = updatedPlayer.YearsActive;
+        player.CurrentRoles = updatedPlayer.CurrentRoles;
+        player.Team = updatedPlayer.Team;
+        player.Url = updatedPlayer.Url;
 
-        await context.SaveChangesAsync();
+        // Save changes
+        await _context.SaveChangesAsync();
         return player;
     }
 
     public async Task<bool> DeletePlayerAsync(int id)
     {
-        var player = await context.Players.FindAsync(id);
+        var player = await _context.Players.FindAsync(id);
         if (player == null) return false;
 
-        context.Players.Remove(player);
-        await context.SaveChangesAsync();
+        _context.Players.Remove(player);
+        await _context.SaveChangesAsync();
         return true;
-    
     }
 }

@@ -45,7 +45,8 @@ IConfiguration config = builder.Configuration;
 
 builder.Services.AddControllers();
 
-
+//Scraper 
+builder.Services.AddHttpClient<IScraperService, ScraperService>();
 
 //JWT
 builder.Services.AddJwtAuthentication(builder.Configuration);
@@ -93,23 +94,8 @@ builder.Services.AddCors(options =>
 
 
 var app = builder.Build();
-//TODO REMOVE
-app.Use(async (context, next) =>
-{
-    if (context.User.Identity is { IsAuthenticated: true })
-    {
-        var claims = context.User.Claims.Select(c => $"{c.Type}={c.Value}");
-        Log.Information($"Authenticated user claims: {string.Join(", ", claims)}");
-    }
-    else
-    {
-        
-        Log.Warning("User is not authenticated.");
-    }
 
-    await next();
-});
-
+app.UseRouting();
 app.UseCors();
 app.UseHttpsRedirection();
 app.UseAuthentication();
