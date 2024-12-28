@@ -9,6 +9,7 @@ namespace DotaProject.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class UserController(IUserService userService) : ControllerBase
     {
         [HttpPost]

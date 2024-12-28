@@ -2,12 +2,14 @@
 using DotaProject.Models;
 using DotaProject.Services.Interfaces;
 using DotaProject.Extensions;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace DotaProject.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class PlayerController : ControllerBase
     {
         private readonly IPlayerService _playerService;
