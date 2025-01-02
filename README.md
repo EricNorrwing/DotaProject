@@ -15,3 +15,6 @@ dotnet ef database update --context AuthDbContext
 This sets up the schema for the database, the code will give you 2 default users
 EricAdmin//any12345 >> Policy(Role) admin
 EricUser//any12345  >> policy(Role) verifiedUser
+
+To run the Scraper
+npx ts-node src/index.ts
